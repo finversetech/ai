@@ -1,0 +1,66 @@
+title Finverse Payment Links: online payments flow \n (use-case: user-initiated payment on payments page or invoice)
+
+##participantgroup Merchant
+actor User
+participant Merchant UI
+participant Merchant backend/ERP
+##end
+##participantgroup Finverse
+participant Finverse Payment UI
+participant Finverse API
+participant Payment Gateways (banks/cards)
+##end
+
+##Finverse API: api.prod.finverse.net
+
+note over User, Merchant backend/ERP: Payment/invoice preflow  \n(merchant-specific)
+
+note over Merchant backend/ERP,Finverse API: API authentication
+
+Merchant backend/ERP->Finverse API: [1] POST /auth/customer/token \n(client_id, client_secret)
+Finverse API-->Merchant backend/ERP: customer_token
+
+
+note over Merchant backend/ERP, Finverse API: Payment Link creation \n(mode = payment: executes specified payment + stores payment method if reusable)
+
+Merchant backend/ERP->Finverse API: [2] POST /payment_links \n (amount, external_user_id, unique_reference_id, metadata)
+Finverse API-->Merchant backend/ERP: Payment Link (url, payment_link_id)
+
+Merchant backend/ERP-->Merchant UI: Show 'Pay Now' button with url
+
+User->Finverse Payment UI: 'Pay Now' (click url to open Finverse Payment UI)
+
+note over Finverse Payment UI, Payment Gateways (banks/cards): Finverse payment processing: \nUser selects payment method & pays \n(async: some payment methods can take \nup to 48hrs to confirm payment status)
+
+Finverse Payment UI->Merchant backend/ERP: HTTP 302 redirect to merchant's redirect_url \n(if ui_mode = redirect)
+
+note over Merchant backend/ERP, Finverse API: Async handling: \nPayment Link status check (webhooks + API) \n(since some payments are async, check status to dynamically show result to users)
+
+Finverse API-->(2)Merchant backend/ERP: [3a] Payment Link & Payment webhooks
+Merchant backend/ERP->Finverse API: [3b] GET /payment_links/{payment_link_id} \n(fallback in case webhooks not received \n+fetch Payment & Payment Method details)
+Finverse API-->Merchant backend/ERP: Payment Link \n(session_status, payment, payment_method)
+
+activate Merchant backend/ERP
+Merchant backend/ERP-->Merchant backend/ERP: record Payment
+Merchant backend/ERP-->Merchant backend/ERP: record Payment Method \n(for future payments)
+deactivate Merchant backend/ERP
+
+note over Merchant UI, Merchant backend/ERP: Show payment result \n(based on Payment Link session_status)
+alt incomplete: session_status = OPEN
+Merchant backend/ERP-->Merchant UI: Show 'Pay Now' button with url
+else paid: session_status = COMPLETE
+Merchant backend/ERP-->Merchant UI: Show payment success
+else failed: session_status = FAILED
+Merchant backend/ERP-->Merchant UI: Show payment failed \n+ url to retry
+else processing: session_status = PROCESSING
+Merchant backend/ERP-->Merchant UI: Show payment processing \n(send notification later)
+end
+
+note over Merchant backend/ERP, Finverse API: Async handling: same as above
+
+note over User, Merchant backend/ERP: Async notifications
+alt paid: session_status = COMPLETE
+Merchant backend/ERP-->User: Notify of payment success
+else failed: session_status = FAILED
+Merchant backend/ERP-->User: Notify of payment failure\n+ url to retry
+end
