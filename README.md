@@ -42,24 +42,13 @@ mkdir -p .cursor && git clone --depth 1 https://github.com/finversetech/ai.git .
 
 ## Using These Skills
 
-### Option 1: Project Skills (Recommended)
+Once installed, Cursor automatically applies these skills when your prompts match their scope. You can also invoke a skill manually with its slash command (e.g. `/finverse-online-payment`).
 
-Copy or symlink the `skills/` directory into your project's `.cursor/skills/` folder:
+For example:
 
-```bash
-mkdir -p .cursor
-cp -r skills .cursor/
-```
+- **finverse-online-payment** — Ask the agent to "implement Finverse checkout", "add payment links to my app", or "integrate Finverse payments". Or type `/finverse-online-payment` to invoke it directly. The agent will follow the flow (create link → redirect → callback → poll status) and generate code for your tech stack.
 
-Skills in `.cursor/skills/` are automatically available when working in that project.
-
-### Option 2: Personal Skills
-
-Copy skills to your personal skills directory for use across all projects:
-
-```bash
-cp -r skills/finverse-online-payment ~/.cursor/skills/
-```
+Skills live in `.cursor/skills/` and are available only in that project. To use them across all projects, copy individual skills to `~/.cursor/skills/` instead.
 
 ## Project Structure
 

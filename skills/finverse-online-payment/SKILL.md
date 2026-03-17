@@ -2,8 +2,8 @@
 name: finverse-online-payment
 description: Implements a Finverse online payment flow with create (Payment link), redirect, callback, and status polling. Use when integrating Finverse payments, building checkout pages with Finverse API, or when the user mentions Finverse payment links or checkout sessions.
 metadata:
-  author: finverse
-  version: "1.0.0"
+ author: finverse
+ version: "1.0.0"
 ---
 
 # Finverse Online Payment Implementation
@@ -18,7 +18,7 @@ metadata:
 1. **Create** – Create payment link via Finverse API, get `url` and `payment_link_id`. Save `payment_link_id` and `unique_reference_id`.
 2. **Redirect** – Redirect user to the payment link URL.
 3. **Callback** – Finverse redirects back with `payment_link_id` and `unique_reference_id` query params. Verify the values matches what was stored earlier.
-4. **Poll** – Poll `GET /payment_links/{paymentLinkId}` for up to 30 seconds, waiting for `session_status` is  `"COMPLETE"`.
+4. **Poll** – Poll `GET /payment_links/{paymentLinkId}` for up to 30 seconds, waiting for `session_status` is `"COMPLETE"`.
 5. **Result** – If `COMPLETE` → success page; else → error page.
 
 ## Sequence Diagrams
@@ -27,7 +27,7 @@ metadata:
 |------|-----------|
 | **Online Payment** (user-initiated payment) | [references/online-payment-flow.wsd](references/online-payment-flow.wsd) |
 | **Payment Method Setup** (store/edit payment method without payment) | [references/payment-method-setup-flow.wsd](references/payment-method-setup-flow.wsd) |
-   
+ 
 ## Tech Stack
 - If the user specifies a tech stack (Go, Node.js, Python, React, etc.), implement using that stack.
 - Otherwise, infer from the project (e.g. go.mod → Go, package.json → Node, requirements.txt → Python).
@@ -68,7 +68,7 @@ After creating the payment link, redirect the user to `link.url`. **The redirect
 1. Read `payment_link_id` from query params (required)
 2. Optionally validate `unique_reference_id` against your records
 3. Poll `GET /payment_links/{paymentLinkId}` immediately, then every 2 seconds
-4. Stop when: `session_status` is `COMPLETE` (success), or timeout (30s → error). Log the paymentId and paymentLinkId.
+4. Stop when: `session_status` is `COMPLETE` (success), or timeout (30s → error). Show the `paymentId`, `paymentMethodId` and `paymentLinkId` in the Success screen. Display `paymentLinkId` in the error screen.
 
 ## Environment Variables
 
@@ -97,5 +97,6 @@ After creating the payment link, redirect the user to `link.url`. **The redirect
 For full documentation for payment API, see: [Finverse Payment API docs](https://docs.finverse.com/#4c635345-e445-4d7b-bd4a-92506e98ada3)
 
 ## SDK Reference
+**If applicable please try and use the SDKs**
 - [Go SDK](https://github.com/finversetech/sdk-go)
 - [Typescript SDK](https://github.com/finversetech/sdk-typescript)
