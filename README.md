@@ -27,16 +27,6 @@ The agent will clone the repo and copy the skills into your project's `.cursor/s
 Install the agent skills from this repository into your current project:
 
 ```bash
-cd /path/to/your/project
-mkdir -p .cursor
-git clone --depth 1 https://github.com/finversetech/ai.git .cursor/finverse-ai-src
-cp -r .cursor/finverse-ai-src/skills .cursor/
-rm -rf .cursor/finverse-ai-src
-```
-
-Or as a one-liner (run from your project root):
-
-```bash
 mkdir -p .cursor && git clone --depth 1 https://github.com/finversetech/ai.git .cursor/finverse-ai-src && cp -r .cursor/finverse-ai-src/skills .cursor/ && rm -rf .cursor/finverse-ai-src
 ```
 
@@ -49,28 +39,6 @@ For example:
 - **finverse-online-payment** — Ask the agent to "implement Finverse checkout", "add payment links to my app", or "integrate Finverse payments". Or type `/finverse-online-payment` to invoke it directly. The agent will follow the flow (create link → redirect → callback → poll status) and generate code for your tech stack.
 
 Skills live in `.cursor/skills/` and are available only in that project. To use them across all projects, copy individual skills to `~/.cursor/skills/` instead.
-
-## Project Structure
-
-```
-ai/
-├── README.md
-└── skills/
-    └── finverse-online-payment/
-        ├── SKILL.md              # Main skill instructions
-        └── references/           # API specs, sequence diagrams
-            ├── create-payment-mode-payment-link.md
-            ├── create-setup-mode-payment-link.md
-            ├── online-payment-flow.wsd
-            └── payment-method-setup-flow.wsd
-```
-
-## Adding New Skills
-
-1. Create a new directory under `skills/` (e.g. `skills/your-skill-name/`)
-2. Add a `SKILL.md` with YAML frontmatter and instructions
-3. Include optional `references/` for detailed docs
-4. Follow the [Cursor Skill authoring guide](https://docs.cursor.com/context/rules-for-ai#skills) for structure and best practices
 
 ## Resources
 
